@@ -1,0 +1,1 @@
+Willkommen bei MustafasSystem! Nach dem ersten Start lädt das System automatisch die schwebende Glas-Taskleiste und die Widgets. Das ZRAM-Tuning sorgt für blitzschnelle Reaktionszeiten selbst auf älteren HDDs. Genieße die ultimative Kombination aus Schönheit und Performance.
