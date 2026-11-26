@@ -120,14 +120,16 @@ make_boot_splash(800, 600, "config/includes.binary/boot/grub/splash.png")
 if os.path.isdir("/usr/share/live/build/bootloaders"):
     if os.path.exists("config/bootloaders"):
         shutil.rmtree("config/bootloaders")
-    shutil.copytree("/usr/share/live/build/bootloaders", "config/bootloaders")
+    shutil.copytree("/usr/share/live/build/bootloaders", "config/bootloaders", symlinks=True, ignore_dangling_symlinks=True)
     for sub, sz in [("isolinux", (640, 480)), ("syslinux_common", (640, 480)), ("grub-pc", (800, 600)), ("grub-efi", (800, 600))]:
         p = f"config/bootloaders/{sub}"
         if os.path.isdir(p):
             svg = os.path.join(p, "splash.svg")
             if os.path.exists(svg):
                 os.remove(svg)
-            make_boot_splash(sz[0], sz[1], os.path.join(p, "splash.png"))
+            sp_out = os.path.join(p, "splash.png")
+            if os.path.islink(sp_out): os.unlink(sp_out)
+            make_boot_splash(sz[0], sz[1], sp_out)
     tt = "config/bootloaders/grub-pc/live-theme/theme.txt"
     if os.path.exists(tt):
         txt = open(tt, encoding="utf-8", errors="ignore").read().replace("Live Boot Menu with GRUB", SYS_NAME)
@@ -292,6 +294,7 @@ hook_path = "config/hooks/live/010-mustafa.hook.chroot"
 with open(hook_path, "w") as f:
     f.write(f"""#!/bin/bash
 set -e
+mkdir -p /etc/alternatives /usr/share/images/desktop-base
 ln -sf /usr/share/mustafa/wallpaper-1920x1080.png /etc/alternatives/desktop-background
 ln -sf /usr/share/mustafa/wallpaper-1920x1080.png /usr/share/images/desktop-base/desktop-background
 cp /usr/share/mustafa/logo-round-256.png /etc/skel/.face
